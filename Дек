@@ -1,0 +1,347 @@
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <string>
+//#include <conio.h>
+using namespace std;
+typedef string temp;
+struct Node
+{
+    temp data;
+    Node* next;
+    Node* prev; //двусвязная система списка
+};
+class DequeList
+{
+    Node* head;
+    Node* tail;
+public:
+    DequeList();//конструктор
+    ~DequeList();//деструктор
+    DequeList(DequeList&);//конструктор копирования
+    void makeEmpty();//сделать дек пустым
+    bool isEmpty();//проверка на пустоту
+    void pushHead(temp);//добавить элемент в начало
+    void pushTail(temp);//добавить в конец
+    temp getHead();//посмотреть элемент в начале
+    temp getTail();//посмотреть элемент в конце
+    temp popHead();//изъять элемент в начале
+    temp popTail();//изъять элемент в конце
+    //void print();
+    int getSize();
+};
+DequeList::DequeList()
+{
+    head = nullptr;
+    tail = nullptr;
+}
+DequeList::~DequeList()
+{
+    if (!isEmpty())
+    {
+        makeEmpty();
+    }
+}
+void DequeList::makeEmpty()
+{
+    if (!isEmpty())
+    {
+        Node* tmp;
+        while (head != nullptr) //старая добрая система очистки
+        {
+            tmp = head->next;
+            delete head;
+            head = tmp;
+        }
+        tail = nullptr;
+    }
+}
+bool DequeList::isEmpty() //Ну вы же не ебланы, объяснять такое не нужно
+{
+    bool ret = false;
+    if (head == nullptr && tail == nullptr)
+    {
+        ret = true;
+    }
+    return ret;
+}
+void DequeList::pushHead(temp newdata)
+{
+    Node* NewNode = new Node;
+    NewNode->data = newdata;
+    NewNode->next = nullptr;
+    NewNode->prev = nullptr;
+    if (head == nullptr) head = tail = NewNode; //если дек пустой, то добавляем 1 элем и все збс
+    else
+    {
+        NewNode->next = head; //к голове постоянно добавляем по чуть-чуть
+        head->prev = NewNode;
+        head = NewNode;
+    }
+}
+void DequeList::pushTail(temp ndata)
+{
+    Node* NewNode = new Node;
+    NewNode->data = ndata;
+    NewNode->next = nullptr;
+    NewNode->prev = nullptr;
+    if (tail == nullptr) tail = head = NewNode;
+    else
+    {
+        NewNode->prev = tail; //тут так же как к голове, но наоборот))0))00)
+        tail->next = NewNode;
+        tail = NewNode;
+    }
+}
+temp DequeList::getHead()
+{
+    temp ret;
+    if (head != nullptr) ret = head->data; //просто смотрим у нужного элема дату
+    return ret;
+}
+temp DequeList::getTail()
+{
+    temp ret;
+    if (tail != nullptr) ret = tail->data; //тоже самое но tail)000)))0)
+    return ret;
+}
+temp DequeList::popHead()
+{
+    if (head != nullptr)
+    {
+        Node* tmp;
+        temp ret;
+        ret = head->data;
+        tmp = head;
+        head = head->next;
+        delete tmp;
+        if (head == nullptr) tail = nullptr; //чтобы удалять элемы нужно просто указатели перетаскивать в противоположную сторону
+        else
+        {
+            head->prev = nullptr;
+        }
+        return ret;
+    }
+}
+temp DequeList::popTail()
+{
+    if (tail != nullptr)
+    {
+        temp ret;
+        Node* tmp;
+        ret = tail->data;
+        tmp = tail;
+        tail = tail->prev;
+        delete tmp;
+        if (tail == nullptr) head = nullptr; //Ну да
+        else
+        {
+            tail->next = nullptr;
+        }
+        return ret;
+    }
+}
+
+    class Deque {
+        int* array;
+        int front;
+        int rear;
+        int size;
+        unsigned short code = 0;
+
+    public:
+        Deque(int);
+
+        Deque(const Deque&);
+
+        ~Deque();
+
+        void clear();
+
+        bool isEmpty() const;
+
+        bool isFull() const;
+
+        void putFront(int); 
+        void putRear(int);
+        int takeFront();
+        int takeRear();
+        int getFront();
+        int getRear();
+        void deleteFront();
+        void deleteRear();
+
+        void changeFront(int);
+
+        void changeRear(int);
+
+        unsigned short getCode() const;
+
+    };
+    Deque::Deque(int arraySize) {
+        array = new int[arraySize];
+        size = arraySize;
+        front = -1;
+        rear = -1;
+    }
+
+    Deque::Deque(const Deque& deque) {
+        size = deque.size;
+        front = deque.front;
+        rear = deque.rear;
+        array = new int[deque.size];
+        for (int i = 0; i < deque.size; i++) {
+            array[i] = deque.array[i];
+        }
+    }
+
+    Deque::~Deque() {
+        clear();
+        delete[] array;
+    }
+
+    bool Deque::isEmpty() const{
+        return front == -1; //ну да
+    }
+
+    bool Deque::isFull() const {
+        return ((front == 0 and rear == size - 1) or front == rear + 1); //да да
+    }
+
+    unsigned short Deque::getCode() const {
+        return code;
+    }
+
+    void Deque::clear() {
+        front = -1;
+        rear = -1;
+    }
+
+    void Deque::putFront(int value) {
+        if (isFull()) {
+            return;
+        }
+        if (front == -1) {
+            front = 0;
+            rear = 0;
+        }
+        else if (front == 0) {
+            front = size - 1;
+        }
+        else {
+            front = (front -1 + size)%size; //формула кольца для дека
+        }
+        array[front] = value;
+    }
+
+    void Deque::putRear(int value) {
+        if (isFull()) {
+            return;
+        }
+        if (front == -1) {
+            front = 0;
+            rear = 0;
+        }
+        else if (rear == size - 1) {
+            rear = 0;
+        }
+        else
+            rear = (rear+1)%size; //такая же на для хвоста
+        array[rear] = value;
+    }
+
+    int Deque::takeFront() {
+        if (isEmpty()) {
+            return 0;
+        }
+
+        int value = array[front]; //да да
+        deleteFront();
+        return value;
+    }
+
+    int Deque::takeRear() { // Да, и это ты знаешь 
+        if (isEmpty()) {
+            return 0;
+        }
+
+        int value = array[rear];
+        deleteRear();
+        return value;
+    }
+
+    void Deque::deleteFront() { 
+        if (isEmpty()) {
+            return;
+        }
+        if (front == rear) {
+            front = -1;
+            rear = -1;
+        }
+        else if (front == size - 1) {
+            front = 0;
+        }
+        else {
+            front = (front + 1) % size; //Формула кольца для удаления первого элема
+        }
+
+    }
+
+    void Deque::deleteRear() {
+        if (isEmpty()) {
+            return;
+        }
+        if (rear == front) {
+            front = -1;
+            rear = -1;
+        }
+        else if (rear == 0) {
+            rear = size - 1;
+        }
+        else {
+            rear = (rear - 1 + size) % size; //формула кольца для удаления последнего элема
+        }
+    }
+
+    int Deque::getFront() {
+        if (isEmpty()) {
+            return 0;
+        }
+        return array[front]; //ДА ДА ДА ДА ДА ДА ДА
+    }
+
+    int Deque::getRear() {
+        if (isEmpty()) {
+            return 0;
+        }
+        return array[rear]; //YES YES YES
+    }
+
+    void Deque::changeFront(int value) {
+        if (isEmpty()) {
+            return;
+        }
+        array[front] = value; //НУ ТУТ ТОЖЕ ЖЕ ЯСНО
+    }
+
+    void Deque::changeRear(int value) {
+        if (isEmpty()) {
+            return;
+        }
+        array[rear] = value; //:_(
+    }
+
+int main()
+{
+    DequeList deq;
+    deq.pushHead("ss");
+    deq.pushHead("ss");
+    deq.pushHead("ss");
+    cout << deq.getHead() << endl;
+
+    cout << deq.popHead() << endl;
+    cout << deq.popHead() << endl;
+    cout << deq.popHead() << endl;
+
+
+}
