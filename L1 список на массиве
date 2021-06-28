@@ -1,0 +1,163 @@
+#include <iostream>
+using namespace std;
+typedef int TElem;
+class my_listbuf
+{
+	struct node {
+		TElem data;
+		node* next;
+	};
+private:
+	node* pb;
+	node* pt;
+	int Errorcode;
+public:
+	my_listbuf()
+	{
+		node* p = new node();
+		p->next = p;
+		pb = p;
+		pt = p;
+		Errorcode = 0;
+	};
+	my_listbuf(my_listbuf* p1)
+	{
+		node* p = new node();
+		p = p1->pb;
+		while (p->next != p1->pb)
+		{
+			p = p->next;
+			Insert(p->data);
+			ToNext();
+		}
+		Tobegin();
+		Errorcode = 0;
+	}
+	~my_listbuf()
+	{
+		if (!is_empty()) {
+			make_empty();
+		}
+		delete pb;
+	};
+	bool is_empty()
+	{
+		bool res = (pb->next == pb);
+		return res;
+	}
+	void make_empty()
+	{
+		node* p = new node();
+		if (pb->next != pb)
+		{
+			p = pb->next;
+			pb->next = NULL;
+			pb = p;
+			while (pb->next != NULL)
+			{
+				pb = p->next;
+				delete p;
+				p = pb;
+
+			}
+			p->next = p;
+			pt = pb;
+		}
+	}
+	void Tobegin()
+	{
+		pt = pb;
+	}
+	bool IsEnd()
+	{
+		bool res;
+		res = (pt->next == pb);
+		return res;
+	}
+	void ToNext()
+	{
+		if (pt->next == pb) { Errorcode = 1; }
+		else { pt = pt->next; Errorcode = 0; }
+	}
+	void Insert(TElem x)
+	{
+		node* p = new node();
+		p->next = pt->next;
+		p->data = x;
+		pt->next = p;
+		Errorcode = 0;
+	}
+	void Extract(TElem& x)
+	{
+		node* p = new node();
+		if (pt->next == pb) { Errorcode = 2; }
+		else {
+			p = pt->next;
+			x = p->data;
+			pt->next = p->next;
+			delete p;
+			Errorcode = 0;
+		}
+	}
+	void Get(TElem& x)
+	{
+		if (pt->next == pb) { Errorcode = 3; }
+		else {
+			x = pt->next->data;
+			Errorcode = 0;
+		}
+	}
+	void Put(TElem x)
+	{
+		if (pt->next == pb) { Errorcode = 4; }
+		else {
+			pt->next->data = x;
+			Errorcode = 0;
+		}
+	}
+	void Delete()
+	{
+		node* p = new node();
+		if (pt->next == pb) { Errorcode = 5; }
+		else {
+			p = pt->next;
+			pt->next = p->next;
+			delete p;
+			Errorcode = 0;
+		}
+	}
+	int GetError()
+	{
+		int res = Errorcode;
+		Errorcode = 0;
+		return res;
+	}
+};
+int main()
+{
+	int n = 10;
+	int i;
+	TElem t;
+	my_listbuf s;
+	for (i = 0; i < n; i++)
+	{
+		t = i;
+		s.Insert(t);
+	}
+	while (!s.IsEnd()) {
+		s.Get(t);
+		cout << t << " ";
+		s.ToNext();
+	}
+	cout << endl;
+	s.Tobegin();
+	while (!s.is_empty()) {
+		s.Extract(t);
+		cout << t << " ";
+	}
+	cout << endl;
+	system("pause");
+	cout << "Empty!!!" << endl;
+	system("pause");
+	return 0;
+}
