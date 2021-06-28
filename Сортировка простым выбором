@@ -17,7 +17,7 @@ int main()
 	fin.open("in.txt");
 	if (!fin)
 	{
-		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		cout << "Не удается открыть файл!" << endl;
 		return 1;
 	}
 
@@ -38,7 +38,7 @@ int main()
 void SelectionSort(Data* arr, int n)
 {
 	Data x;
-	int k; //РёРЅРґРµРєСЃ РјРёРЅРёРјСѓРјР°
+	int k; //индекс минимума
 	for (int i = 0; i < n; i++)
 	{
 		x = arr[i];
