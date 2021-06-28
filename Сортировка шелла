@@ -17,7 +17,7 @@ int main()
 	fin.open("in.txt");
 	if (!fin)
 	{
-		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		cout << "Не удается открыть файл!" << endl;
 		return 1;
 	}
 
@@ -43,7 +43,7 @@ void ShellSort(Data* arr, int n, int* h, int m)
 
 	for (int t = 0; t < m; t++)
 	{
-		k = h[t]; //С‚РµРєСѓС‰РµРµ СЃРјРµС‰РµРЅРёРµ
+		k = h[t]; //текущее смещение
 		for (int i = k; i < n; i++)
 		{
 			x = arr[i];
