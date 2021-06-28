@@ -1,0 +1,60 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+struct Data
+{
+	int key;
+	char data;
+};
+
+void ShellSort(Data*, int, int*, int);
+
+int main()
+{
+	ifstream fin;
+	fin.open("in.txt");
+	if (!fin)
+	{
+		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		return 1;
+	}
+
+	int n;
+	fin >> n;
+	Data* arr = new Data[n];
+	int h[] = { 5, 3, 1 };
+	int m = 3;
+	for (int i = 0; i < n; i++)
+		fin >> arr[i].data >> arr[i].key;
+	ShellSort(arr, n, h, m);
+
+	for (int i = 0; i < n; i++)
+		cout << arr[i].data << " ";
+	cout << endl;
+	delete[] arr;
+}
+
+void ShellSort(Data* arr, int n, int* h, int m)
+{
+	Data x;
+	int j, k;
+
+	for (int t = 0; t < m; t++)
+	{
+		k = h[t]; //С‚РµРєСѓС‰РµРµ СЃРјРµС‰РµРЅРёРµ
+		for (int i = k; i < n; i++)
+		{
+			x = arr[i];
+			j = i - k;
+
+			while (arr[j].key > x.key && j >= 0)
+			{
+				arr[j + k] = arr[j];
+				j -= k;
+			}
+			arr[j + k] = x;
+		}
+	}
+}
