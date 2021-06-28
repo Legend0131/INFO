@@ -1,0 +1,180 @@
+#include <iostream>
+#include <Windows.h>
+#include <conio.h>
+using namespace std;
+void SetColor(int text, int background)
+{
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
+}
+struct Node
+{
+    double data;
+    Node* pNext;
+};
+class List
+{
+private:
+    Node* head;
+    Node* pointer;
+public:
+    List()
+    {
+        head = nullptr;
+        pointer = nullptr;
+    }
+    void put(double value)
+    {
+        Node* temp = new Node;
+        temp->data = value;
+        temp->pNext = nullptr;
+        if (head == nullptr) { //в списке нет элементов
+
+            head = temp;
+        }
+        else if (pointer == nullptr) //перед главным
+        {
+            temp->pNext = head;
+            head = temp;
+
+        }
+        else // в середину или конец
+        {
+            if (pointer->pNext != nullptr) temp->pNext = pointer->pNext; //если не в конец
+            pointer->pNext = temp;
+
+        }
+    }
+    List(const List& another)
+    {
+            Node* temp = another.head; //берём голову
+            while (temp)
+            {
+                put(temp->data); //и начинаем по циклу ее гнать, записывая в другой список
+                temp = temp->pNext;
+            }
+    }
+    ~List()
+    {
+        clear();
+    }
+    void clear()
+    {
+        Node* temp = new Node;
+        while (head->pNext != nullptr)
+        {
+            temp = head;
+            temp = temp->pNext;
+            delete temp;
+        }
+    }
+    double take()
+    {
+        double ret =0;
+        if (!isEmpty() && !isEndList()) {
+
+            ret = check();
+            delel();
+        }
+        return ret;
+    }
+    double check() //тут сделай возвращение кода по маске
+    {
+        double x;
+        if (pointer == nullptr && head != nullptr) x = head->data;
+        else if (pointer->pNext != nullptr) x = pointer->pNext->data;
+        return x;
+    }
+    void delel()
+    {
+        if (!isEmpty() && !isEndList()) { //тут сделай возвращение кода по маске
+
+            Node* tmp;
+
+            if (pointer == nullptr) { //первый
+
+                tmp = head->pNext;
+                tmp->data = head->pNext->data;
+                delete head;
+                head = tmp;
+            }
+            else if (pointer->pNext != nullptr) { //в середине
+
+                tmp = pointer->pNext;
+                pointer->pNext = pointer->pNext->pNext;
+                delete tmp;
+            }
+        }
+    }
+    void change(double value)
+    {
+        if (!isEmpty() && !isEndList()) {
+
+            if (pointer != nullptr) pointer->pNext->data = value; 
+            else {
+                head->data = value;
+            }
+
+        }
+    }
+    bool isEmpty()
+    {
+        bool ret = false;
+        if (head == nullptr) {
+            ret = true;
+        }
+        return ret;
+    }
+    bool isEndList()
+    {
+        bool ret = true;
+
+        if (pointer == nullptr || pointer->pNext != nullptr) ret = false; 
+        return ret;
+    }
+    void setpointer()
+    {
+        pointer = nullptr;
+    }
+    void movepointer()
+    {
+        if (!isEmpty())
+        {
+            if (pointer == nullptr)
+                pointer = head;
+            else
+                if (pointer->pNext != nullptr)
+                    pointer = pointer->pNext; //тут сделай возвращение кода по маске
+        }
+    }
+};
+int main()
+{
+    setlocale(LC_ALL, "ru");
+    List L1;
+    //cin >> n;
+    L1.put(-1);
+    SetColor(10, 0);
+    cout << L1.check() << endl;
+    SetColor(15, 0);
+    //cin >> n;
+    L1.put(-2);
+    SetColor(10, 0);
+    cout << L1.check() << endl;
+    SetColor(15, 0);
+    //cin >> n;
+    L1.put(-3);
+    SetColor(10, 0);
+    cout << L1.check() << endl;
+    SetColor(15, 0);
+    cout << L1.isEmpty() << " Если 1 - то пустой, 0 - непустой" << endl;
+    SetColor(4, 0);
+    L1.setpointer();
+    cout << L1.take() << endl;
+    cout << L1.take() << endl;
+    L1.change(4);
+    cout << L1.check() << endl;
+    SetColor(15, 0);
+    cout << L1.isEmpty() << " Если 1 - то пустой, 0 - непустой" << endl;
+    return 0;
+}
