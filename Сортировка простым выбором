@@ -1,0 +1,57 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+struct Data
+{
+	int key;
+	char data;
+};
+
+void SelectionSort(Data*, int);
+
+int main()
+{
+	ifstream fin;
+	fin.open("in.txt");
+	if (!fin)
+	{
+		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		return 1;
+	}
+
+	int n;
+	fin >> n;
+	Data* arr = new Data[n];
+
+	for (int i = 0; i < n; i++)
+		fin >> arr[i].data >> arr[i].key;
+	SelectionSort(arr, n);
+
+	for (int i = 0; i < n; i++)
+		cout << arr[i].data << " ";
+	cout << endl;
+	delete[] arr;
+}
+
+void SelectionSort(Data* arr, int n)
+{
+	Data x;
+	int k; //РёРЅРґРµРєСЃ РјРёРЅРёРјСѓРјР°
+	for (int i = 0; i < n; i++)
+	{
+		x = arr[i];
+		k = i;
+		for (int j = i + 1; j < n; j++)
+		{
+			if (arr[j].key < x.key)
+			{
+				k = j;
+				x = arr[j];
+			}
+		}
+		arr[k] = arr[i];
+		arr[i] = x;
+	}
+}
