@@ -1,0 +1,58 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+struct Data
+{
+	int key;
+	char data;
+};
+
+void QuickSort(Data*, int, int);
+
+int main()
+{
+	ifstream fin;
+	fin.open("in.txt");
+	if (!fin)
+	{
+		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		return 1;
+	}
+
+	int n;
+	fin >> n;
+	Data* arr = new Data[n];
+
+	for (int i = 0; i < n; i++)
+		fin >> arr[i].data >> arr[i].key;
+	QuickSort(arr, 0, n-1);
+
+	for (int i = 0; i < n; i++)
+		cout << arr[i].data << " ";
+	cout << endl;
+	delete[] arr;
+}
+
+void QuickSort(Data* arr, int l, int r)
+{
+	Data pivot, y;
+	int i = l, j = r; //Р»РµРІС‹Р№ Рё РїСЂР°РІС‹Р№ СѓРєР°Р·Р°С‚РµР»Рё
+	pivot = arr[(l + r) / 2];
+
+	while (i < j)
+	{
+		while (arr[i].key < pivot.key) i++;
+		while (arr[j].key > pivot.key) j--;
+		if (j <= j)
+		{
+			y = arr[i];
+			arr[i] = arr[j];
+			arr[j] = y;
+			i++; j--;
+		}
+	}
+	if (l < j) QuickSort(arr, l, j);
+	if (i < r) QuickSort(arr, i, r);
+}
