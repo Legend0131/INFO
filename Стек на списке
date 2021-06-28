@@ -1,0 +1,149 @@
+#include <iostream>
+
+struct node
+{
+	double data; //поле данных
+	node* next; //указатель на следующий элемент
+};
+
+class StackList
+{
+private:
+	node* top;
+	int error;
+
+public:
+	StackList(); //конструктор
+	StackList(const StackList&); //конструктор копирования
+	~StackList(); //деструктор
+	
+	double pop(); //взять вершину
+	void push(double); //положить в стек
+	bool empty(); //проверка на пустоту
+	double getTop(); //посмотреть вершину
+	void makeEmpty(); //сделать стек пустым
+	int getError();  //геттер кода ошибки
+	void print(); //вывод на экран
+};
+
+StackList::StackList()
+{
+	error = 0;
+	top = nullptr;
+}
+
+StackList::StackList(const StackList &obj)
+{
+	error = obj.error;
+
+	top = nullptr;
+	node* p = obj.top;
+	node* p1;
+	node* p2;
+
+	while (p != nullptr)
+	{
+		p1 = nullptr;
+		p1 = new (std::nothrow) node;
+		if (p1 == nullptr)
+		{
+			makeEmpty();
+			error = 1;
+			return;
+		}
+
+		p1->data = p->data;
+		p1->next = nullptr;
+		if (top == nullptr)
+		{
+			top = p1;
+			p2 = top;
+		}
+		/*else
+		{
+			p2->next = p1;
+			p2 = p2->next;
+		}*/
+		p = p->next;
+	}
+}
+
+StackList::~StackList()
+{
+	makeEmpty();
+}
+
+double StackList::pop()
+{
+	if (empty())
+	{
+		error = 2;
+		return 0;
+	}
+	double _data = top->data;
+	node* temp = top;
+	top = top->next;
+	delete temp;
+	return _data;
+}
+
+void StackList::push(double new_data)
+{
+	node* temp = nullptr;
+	temp = new (std::nothrow) node;
+
+	if (temp == nullptr)
+	{
+		error = 1;
+		return;
+	}
+
+	temp->data = new_data;
+	temp->next = top;
+	top = temp;
+}
+
+bool StackList::empty()
+{
+
+	return top == nullptr;
+}
+
+double StackList::getTop()
+{
+	return 0.0;
+}
+
+void StackList::makeEmpty()
+{
+	node* temp;
+	while (top != nullptr)
+	{
+		temp = top;
+		top = top->next;
+		delete temp;
+	}
+}
+
+int StackList::getError()
+{
+	int err_temp = error;
+	error = 0;
+	return err_temp;
+}
+
+void StackList::print()
+{
+	node* temp = top;
+	while (temp != nullptr)
+	{
+		std::cout << temp->data << " ";
+		temp = temp->next;
+	}
+	std::cout << std::endl;
+}
+
+int main()
+{
+
+}
