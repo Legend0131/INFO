@@ -1,0 +1,214 @@
+// Queue(Array and List).cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+
+#include <iostream>
+#include "windows.h"
+#include <conio.h>
+using namespace std;
+void SetColor(int text, int background)
+{
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
+}
+class QueueArr
+{
+private:
+    int head; //указатель на первый
+    int tail; //на последний
+    int size; //размеры
+    double* data; //поля данныъ
+public:
+    QueueArr(int qsize)
+    {
+        size = qsize; //передаём размеры и обнуляем указатели
+        head = 0;
+        tail = 0;
+        data = new double[size];
+    }
+    QueueArr(const QueueArr& anotherq)
+    {
+        head = anotherq.head;
+        tail = anotherq.tail;
+        size = anotherq.size;
+        for (int i = 0; i < anotherq.size; i++) //все на передавали и переписали
+            data[i] = anotherq.data[i];
+    }
+    void clear()
+    {
+        head = 0;
+        tail = 0; //возвращаем указатели на исходную
+    }
+    ~QueueArr()
+    {
+        clear();
+        delete[]data; //очищаем указатели и удаляем поля данных
+    }
+    void put(double value)
+    {
+        data[tail] = value; //добавляем по хвосту
+        tail = (tail + 1) % size; //формула буферного элемента (у нас из-за кольца не получается прям 100% работать с очередью, поэтому всегда есть указатель на никакой элемент
+        //каким-то он станет, когда очередь будет полной, то есть сомкнется с всегда вещественной частью очереди, тобишь с head (реализацию смотрите в isEmpty и isFull))
+    }
+    void del()
+    {
+        head = (head + 1) % size; //формула закольцованности (типо взяв указатель под остаток от изначального размера мы также будем идти по индексам, но коль сойдемся, то вернёмся к 0 индексу и по новой)
+    }
+    double take()
+    {
+        double value;
+        value = data[head]; //запоминаем данные
+        del(); //смещаем указатель
+        return value; //возвращаем данные
+    }
+    double check()
+    {
+        return data[head]; //смотрим по голове (1 элементу)
+    }
+    bool isEmpty()
+    {
+        return head == tail; //они сомкнутся, когда мы полностью разберём все элементы в очереди
+    }
+    bool isFull()
+    {
+        if ((tail + 1) % size == head)
+            return 1;
+        else
+            return 0;
+    }
+};
+struct Node
+{
+    double data;
+    Node* pNext;
+};
+class QueueList
+{
+private:
+    Node* head;
+    Node* tail;
+public:
+    QueueList()
+    {
+        head = nullptr; //сначала у нас пустота
+        tail = nullptr;
+    }
+    void clear()
+    {
+        Node* temp = head; //запоминаем указатель, чтоб не потерялся
+        while (temp != nullptr)
+        {
+            temp = head->pNext; //и по циклу убераем все отсюда, что не нужно
+            delete head;
+            head = temp;
+        }
+    }
+    ~QueueList()
+    {
+        clear(); //в списке деструктор и очищение - одно и то же
+    }
+    QueueList(const QueueList& obj)
+    {
+        Node* temp = obj.head; //берём голову
+        while (temp)
+        {
+            put(temp->data); //и начинаем по циклу ее гнать, записывая в другую очередь
+            temp = temp->pNext;
+        }
+    }
+    void put(double value)
+    {
+        Node* temp = new Node; //временная нода
+        temp->data = value; //даем ей наше валуе
+        temp->pNext = nullptr; //указатель естественно должен быть нулевой
+
+        if (head != nullptr) //проверка на пустоту
+        {
+            tail->pNext = temp; //передаём указатель на следующий
+            tail = temp; //добавляем ноду в список
+        }
+        else
+        {
+            head = temp;//иначе нам нужно просто хотя бы одну ноду туда засунуть и будет всё с кайфом
+            tail = temp;
+        }
+    }
+    void del()
+    {
+        Node* temp = head->pNext; //Запоминаем указатель на следующую ноду
+        delete head; //удаляем к чертям
+        head = temp; //переходим к другой
+    }
+    double take()
+    {
+        double value = head->data; //запоминаем данные
+        Node* temp = head; //берём ноду
+        head = head->pNext; //запоминаем ее указатель на следующую
+        delete temp; //удаляем
+        return value; //возвращаем
+    }
+    double check()
+    {
+        double value = head->data; //смотрим по указателю головы
+        return value;
+    }
+    bool isEmpty()
+    {
+        return head == nullptr; //ну тут только дебил не поймёт почему
+    }
+};
+double testListqueue()
+{
+    int n;
+    QueueList queue;
+    cout << "Вводите элементы (3 штуки)(те которые вы добавили будут подсвечиваться зелёным. Те что забрали - красным) " << endl;
+    //cin >> n;
+    queue.put(-1);
+    SetColor(10, 0);
+    //cin >> n;
+    queue.put(-2);
+    queue.put(-3);
+    cout << queue.check() << endl;
+    SetColor(15, 0);
+    cout << queue.isEmpty() << " Если 1 - то пустой, 0 - непустой" << endl;
+    SetColor(4, 0);
+    cout << queue.take() << endl;
+    cout << queue.take() << endl;
+    cout << queue.take() << endl;
+    SetColor(15, 0);
+    cout << queue.isEmpty() << " Если 1 - то пустой, 0 - непустой" << endl;
+    return 0;
+}
+double testArrqueue()
+{
+    int n;
+    QueueArr queue(5);
+    cout << queue.isEmpty() << endl;
+    cout << queue.isFull() << endl;
+    queue.put(1);
+    queue.put(2);
+    queue.put(3);
+    queue.put(4);
+    cout << queue.isFull() << endl;
+    for(int i = 0; i < 4; i++)
+    cout << queue.take() << " ";
+    cout << endl;
+    cout << queue.isEmpty() << endl;
+    queue.put(-1);
+    queue.put(-2);
+    queue.put(-3);
+    queue.put(-4);
+    cout << queue.isFull() << endl;
+    for (int i = 0; i < 4; i++)
+        cout << queue.take() << " ";
+    cout << endl;
+    cout << queue.isFull() << endl;
+    return 0;
+}
+int main()
+{
+    setlocale(LC_ALL, "ru");
+    testArrqueue();
+    _getch();
+    system("cls");
+    testListqueue();
+}
