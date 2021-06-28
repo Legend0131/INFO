@@ -17,7 +17,7 @@ int main()
 	fin.open("in.txt");
 	if (!fin)
 	{
-		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		cout << "Не удается открыть файл!" << endl;
 		return 1;
 	}
 
@@ -38,7 +38,7 @@ int main()
 void QuickSort(Data* arr, int l, int r)
 {
 	Data pivot, y;
-	int i = l, j = r; //Р»РµРІС‹Р№ Рё РїСЂР°РІС‹Р№ СѓРєР°Р·Р°С‚РµР»Рё
+	int i = l, j = r; //левый и правый указатели
 	pivot = arr[(l + r) / 2];
 
 	while (i < j)
