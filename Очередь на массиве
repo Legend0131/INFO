@@ -1,0 +1,188 @@
+#include <iostream>
+
+class QueueArr
+{
+private:
+	int maxSize; //размер очереди+буферный элемент
+	double* queue_arr; //массив элементов очереди
+	int head; //голова очереди
+	int tail; //конец очереди
+
+	void fail(int); //обработка ошибок
+
+public:
+	QueueArr(int);//конструктор
+	QueueArr(const QueueArr& queue);//конструктор копирования
+	~QueueArr();//деструктор
+
+	double pop();//взять элемент
+	void push(double);//положить элемент
+	bool empty();//проверка пустоты
+	bool full();//проверка полноты
+	double read_head();//прочитать значение головы
+	void change_head(double);//изменить значение головы
+	void delete_head();//удалить значение головы
+	void change_tail(double); //изменить значение хвоста
+	void make_empty(); // сделать очередь пустой
+	void print();//вывести на экран
+};
+
+//фотальная обработка ошибок 
+void QueueArr::fail(int err)
+{
+	switch (err)
+	{
+	case 1:
+		std::cout << "Не удалось выделить память\n";
+		break;
+
+	case 2:
+		std::cout << "Не удалось положить элемент в очередь\n";
+		break;
+
+	case 3:
+		std::cout << "Не удалось взять элемент, очередь пуста\n";
+		break;
+
+	case 4:
+		std::cout << "Не удалось скопировать очередь, очередь пуста\n";
+		break;
+	}
+	exit(1);
+}
+
+//конструктор с параметром
+//создает очередь с заданным размером (size)
+QueueArr::QueueArr(int size)
+{
+	maxSize = size+1;
+	queue_arr = nullptr;
+	queue_arr = new double[maxSize];
+
+	if (queue_arr == nullptr) fail(1);
+	head = 0;
+	tail = 0;
+}
+
+//конструктор копирования
+//копирует очередь с уже готовой
+QueueArr::QueueArr(const QueueArr& queue) 
+{
+	queue_arr = nullptr;
+	queue_arr = new (std::nothrow) double[queue.maxSize];
+	if (queue_arr == nullptr) switch(4);
+
+		maxSize = queue.maxSize;
+		head = queue.head;
+		tail = queue.tail;
+		for (int i = 0; i < (tail - head + maxSize) % maxSize; i++)
+			queue_arr[i % maxSize] = queue.queue_arr[i % maxSize];
+}
+
+//деструктор
+//удаляет массив с элементами очереди и ставит указатели в начальное положение
+QueueArr::~QueueArr()
+{
+	delete[] queue_arr;
+	queue_arr = nullptr;
+	maxSize = 0;
+	head = 0;
+	tail = 0;
+}
+
+//извлекает элемент из очереди (сначала показывает)
+double QueueArr::pop()
+{
+	if (empty()) fail(3);
+	int x;
+	x =  queue_arr[head];
+	std::cout << "Извлекли элемент" << x << std::endl;
+	delete_head();
+	return x;
+}
+
+//добавляет элемент в конец очереди
+void QueueArr::push(double elem)
+{
+	if (full()) fail(2);
+	queue_arr[tail] = elem;
+	tail = (tail + 1) % maxSize;
+	std::cout << "Положили элемент" << elem << std::endl;
+}
+
+//проверяет пуста ли очередь
+bool QueueArr::empty()
+{
+	return head==tail;
+}
+
+//проверяет заполнена ли очередь
+bool QueueArr::full()
+{
+	return (tail + 1) % maxSize == head;
+}
+
+//читатет значение элемента в голове очереди (не удаляя его)
+double QueueArr::read_head()
+{
+	return queue_arr[head];
+}
+
+//изменяет элемент из начала очереди
+void QueueArr::change_head(double elem)
+{
+	queue_arr[head] = elem;
+}
+
+//удаляет элемент из начала очереди
+void QueueArr::delete_head()
+{
+	head = (head + 1) % maxSize;
+}
+
+//изменяет элемент в конце очереди
+void QueueArr::change_tail(double elem)
+{
+	queue_arr[tail-1] = elem;
+}
+
+//переводит указатели в начальное положение (делает очередь пустой)
+void QueueArr::make_empty()
+{
+	head = 0;
+	tail = 0;
+}
+
+//выводит очередь на экран
+void QueueArr::print()
+{
+	std::cout << "Queue: ";
+		for (int i = head; i != tail; i = (i + 1) % maxSize)
+			std::cout << queue_arr[i] << " ";
+		std::cout << std::endl;
+}
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	QueueArr q1(5);
+	q1.push(1); q1.push(2); q1.push(3);
+	
+	QueueArr q2(q1);
+	
+	q1.print();
+	q2.print();
+	
+	std::cout << q1.read_head() << std::endl;
+	q1.change_head(-10);
+	q1.print();
+
+	q2.pop();
+	q2.change_tail(-2);
+	q2.print();
+
+	q1.print();
+	q1.make_empty();
+	q2.print();
+	q1.print();
+}
