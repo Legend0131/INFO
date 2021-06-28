@@ -1,0 +1,53 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+struct Data
+{
+	int key;
+	char data;
+};
+
+void InsertionSort(Data*, int);
+
+int main()
+{
+	ifstream fin;
+	fin.open("in.txt");
+	if (!fin)
+	{
+		cout << "РќРµ СѓРґР°РµС‚СЃСЏ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»!" << endl;
+		return 1;
+	}
+
+	int n;
+	fin >> n;
+	Data *arr = new Data[n];
+
+	for (int i = 0; i < n; i++)
+		fin >> arr[i].data >> arr[i].key;
+	InsertionSort(arr, n);
+
+	for (int i = 0; i < n; i++)
+		cout << arr[i].data << " ";
+	cout << endl;
+	delete[] arr;
+}
+
+void InsertionSort(Data* arr, int n)
+{
+	Data x; int j;
+	for (int i = 1; i < n; i++)
+	{
+		x = arr[i];
+		j = i - 1;
+
+		while (arr[j].key > x.key && j >= 0)
+		{
+			arr[j + 1] = arr[j];
+			j--;
+		}
+		arr[j + 1] = x;
+	}
+}
