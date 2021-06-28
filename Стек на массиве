@@ -1,0 +1,154 @@
+#include <iostream>
+
+class StackArr
+{
+private:
+	int maxSize; //глубина стека
+	double* stack_arr;//массив элементов стека
+	int top; // вершина стека
+
+	void fail(int);//обработка ошибок
+
+public:
+	StackArr(int);//конструктор
+	StackArr(const StackArr& stack);//констуктор копирования
+	~StackArr();//деструктор
+
+	double pop();//взять вершину
+	void push(double);//положить элемент в стек
+	bool empty();//проверка "пуст ли стек?"
+	bool full();//проверка "полон ли стек?"
+	double read_top();//прочесть вершину
+	void change_top(double);//изменить вершину
+	void delete_top();//удалить вершину
+	void make_empty();//сделать стек пустым
+	void print();//вывод на экран
+};
+
+//фотальная обработка ошибок
+void StackArr::fail(int err)
+{
+	switch (err)
+	{
+	case 1:
+		std::cout << "Не удалось выделить память\n";
+		break;
+
+	case 2:
+		std::cout << "Не удалось положить элемент в стек\n";
+		break;
+
+	case 3:
+		std::cout << "Не удалось взять(удалить) элемент, стек пуст\n";
+		break;
+	}
+	exit(1);
+}
+
+//конструктор с параметром (создает стек с заданной глубиной)
+StackArr::StackArr(int size)
+{
+	maxSize = size;
+	stack_arr = nullptr;
+	stack_arr = new double[maxSize];
+
+	if (stack_arr == nullptr) fail(1);
+	top = -1;
+}
+
+//конструктор копирования
+//копирует стек с данного
+StackArr::StackArr(const StackArr& stack)
+{
+	maxSize = stack.maxSize;
+	top = stack.top;
+	stack_arr = nullptr;
+	stack_arr = new (std::nothrow) double[maxSize];
+
+	if (stack_arr == nullptr) fail(1);
+
+	for (int i = 0; i < maxSize; i++)
+		stack_arr[i] = stack.stack_arr[i];
+}
+
+//удаляет стек
+//удаляет массив с элементами стека и ставит вершину в начальное положение
+StackArr::~StackArr()
+{
+	delete[] stack_arr;
+	stack_arr = nullptr;
+	maxSize = 0;
+	top = -1;
+}
+
+//извлекает элемент из стека
+double StackArr::pop()
+{
+	if (empty()) fail(3);
+	return stack_arr[top--];
+}
+
+//добавляет элемент в стек
+void StackArr::push(double elem)
+{
+	if (full()) fail(2);
+	stack_arr[++top] = elem;
+}
+
+//проверка на пустоту стека
+bool StackArr::empty()
+{
+	return top == -1;
+}
+
+//проверка на полноту стека
+bool StackArr::full()
+{
+	return top == maxSize - 1;
+}
+
+//просматривает вершину стека, не удаляя её
+double StackArr::read_top()
+{
+	return stack_arr[top];
+}
+
+//изменяет вершину на данную
+void StackArr::change_top(double elem)
+{
+	stack_arr[top] = elem;
+}
+
+//удаляет вершину стека, не просматривая её
+void StackArr::delete_top()
+{
+	if (empty()) fail(3);
+	top--;
+}
+
+//сделать стек пустым
+void StackArr::make_empty()
+{
+	top = -1;
+}
+
+//выводит стек на экран
+void StackArr::print()
+{
+	std::cout << "Stack: ";
+	for (int i = top; i <= 0; i--)
+		std::cout << stack_arr[i] << " ";
+	std::cout << std::endl;
+}
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	StackArr st1(5);
+	st1.push(1.5); st1.push(-2.3); st1.push(4);
+
+	st1.print();
+
+	std::cout << "Изъятый элемент: " << st1.pop() << std::endl;
+	st1.print();
+}
