@@ -1,0 +1,115 @@
+#include <iostream>
+#include <fstream>
+
+class StackArr
+{
+private:
+	int maxSize; //глубина стека
+	int *stack_arr;//массив элементов стека
+	int Top; // вершина стека
+
+    void fail(int);//обработка ошибок
+
+public:
+	StackArr(int);//конструктор c параметром
+	~StackArr();//деструктор
+	void pop();//удалить вершину
+	void push(int);//положить в стек
+	int top();//посмотреть вершину(без удаления)
+	bool empty();// true. если пуст
+	bool full();// true, если полон
+};
+
+//фотальная обработка ошибок
+void StackArr::fail(int err)
+{
+	switch (err)
+	{
+	case 1:
+		std::cout << "empty\n";
+		break;
+
+	case 2:
+		std::cout << "full\n";
+		break;
+	}
+	exit(0);
+}
+
+//конструктор с параметром (создает стек с заданной глубиной)
+StackArr::StackArr(int size)
+{
+	maxSize = size;
+	stack_arr = nullptr;
+	stack_arr = new int[maxSize];
+
+	Top = -1;
+}
+
+//удаляет стек
+//удаляет массив с элементами стека и ставит вершину в начальное положение
+StackArr::~StackArr()
+{
+	delete[] stack_arr;
+	stack_arr = nullptr;
+	maxSize = 0;
+	Top = -1;
+}
+
+//извлекает элемент из стека
+void StackArr::pop()
+{
+	if (empty()) fail(1);
+    stack_arr[Top--];
+}
+
+//добавляет элемент в стек
+void StackArr::push(int elem)
+{
+	if (full()) fail(2);
+	stack_arr[++Top] = elem;
+}
+
+//проверка на пустоту стека
+bool StackArr::empty()
+{
+	return Top == -1;
+}
+
+//проверка на полноту стека
+bool StackArr::full()
+{
+	return Top == maxSize - 1;
+}
+
+//просматривает вершину стека, не удаляя её
+int StackArr::top()
+{
+	return stack_arr[Top];
+}
+
+int main()
+{
+    std::ifstream in;
+    in.open("input.txt");
+    int size, m, n, elem;
+    in >> size >> m;
+    StackArr st1(size);
+    for(int i = 0; i < m; i++)
+    {
+        in >> elem;
+        st1.push(elem);
+        std::cout << st1.top() << " ";
+    }
+    std::cout << std::endl;
+
+    in >> n;
+    for (int i = 0; i < n; i++)
+    {
+        std::cout << st1.top() << " ";
+        st1.pop();
+
+    }
+    in.close();
+
+}
